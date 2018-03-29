@@ -1,17 +1,19 @@
+byte:
+	bitset<n>?
+
 node:
 	int val
-	node* child[]?
+	map<byte, node*> child
 
 dictionary:
 	int size
-	string? words[]
+	vector<byte> words[]
 	node* root, cur
-	bool walkable(char next_char)
-	void add_new_node(char next_char)
-	void walk_to(char next_char)
-
-	string? decode(int val)
+	bool walkable(byte next_byte)
+	void add_new_node(byte next_byte)
+	void walk_to(byte next_byte)
+	vector<byte> decode(int val)
 
 global:
-	void decode_output(file?, char? output_char)
-	char? read_next(file?, int bits)
+	void decode_output(file?, byte output_byte)
+	byte read_next(file?, int bits)
