@@ -1,0 +1,17 @@
+node:
+	int val
+	node* child[]?
+
+dictionary:
+	int size
+	string? words[]
+	node* root, cur
+	bool walkable(char next_char)
+	void add_new_node(char next_char)
+	void walk_to(char next_char)
+
+	string? decode(int val)
+
+global:
+	void decode_output(file?, char? output_char)
+	char? read_next(file?, int bits)
