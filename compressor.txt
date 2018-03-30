@@ -1,19 +1,37 @@
 byte:
-	bitset<n>?
+	bitset<8>?
+
+bits:
+	bitset<1>?
 
 node:
 	int val
-	map<byte, node*> child
+	map<byte, int> child
+	
+trie:
+	private:
+		int cur
+		vector<node> nodes
+	public:
+		bool exist_child(byte next_byte)
+		void add_new_node(byte next_byte)
+		void go_to_child(byte next_byte)
+		void reset()
 
 dictionary:
-	int size
-	vector<byte> words[]
-	node* root, cur
-	bool walkable(byte next_byte)
-	void add_new_node(byte next_byte)
-	void walk_to(byte next_byte)
-	vector<byte> decode(int val)
+	private:
+		int _size
+		vector<byte> words[]
+		trie dictionary_tree
+	public:
+		int size()
+		vector<bits> encode(byte next_byte)
+		vector<byte> decode(int val)
 
 global:
+	void encode(file?)
+	void encode_output(file?, vector<bits> output_bits)
+	byte encode_read_next(file?)
+	void decode(file?)
 	void decode_output(file?, byte output_byte)
-	byte read_next(file?, int bits)
+	vector<bits> decode_read_next(file?, int no_of_bits)
