@@ -10,28 +10,28 @@ node:
 	
 trie:
 	private:
-		int cur
-		vector<node> nodes
+		int cur						// the current position in the trie
+		vector<node> nodes				// the nodes of the trie
 	public:
-		bool exist_child(byte next_byte)
-		void add_new_node(byte next_byte)
-		void go_to_child(byte next_byte)
-		void reset()
+		bool exist_child(byte next_byte)		// check if current node has a corresponding child
+		void add_new_node(byte next_byte)		// add a new child for current node
+		void go_to_child(byte next_byte)		// change current position to the child node
+		void reset()					// reset current position to root
 
 dictionary:
 	private:
-		int _size
-		vector<byte> words[]
-		trie dictionary_tree
+		int _size					// size of the dictionary
+		vector<byte> words[]				// corresponding bytes of the index
+		trie dictionary_tree				// a trie storing the dictionary
 	public:
-		int size()
-		vector<bits> encode(byte next_byte)
-		vector<byte> decode(int val)
+		int size()					// return the size of the dictionary
+		vector<bits> encode(byte next_byte)		// return the next encoded bits
+		vector<byte> decode(int val)			// return the next decoded bytes
 
 global:
-	void encode(file?)
-	void encode_output(file?, vector<bits> output_bits)
-	byte encode_read_next(file?)
-	void decode(file?)
-	void decode_output(file?, byte output_byte)
-	vector<bits> decode_read_next(file?, int no_of_bits)
+	void encode(file?)					// to encode the given file
+	void encode_output(file?, vector<bits> output_bits)	// output the bits to the encoded file
+	byte encode_read_next(file?)				// read the next byte from the file being encoded
+	void decode(file?)					// to decode the given file
+	void decode_output(file?, byte output_byte)		// output the bytes to the decoded file
+	vector<bits> decode_read_next(file?, int no_of_bits)	// read next several bits from the file being decoded
