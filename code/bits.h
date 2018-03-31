@@ -1,7 +1,7 @@
 #include<vector>
 
 typedef bool bit;
-typedef unsigned char byte;
+typedef char byte;
 
 typedef std::vector<bit> bits;
 typedef std::vector<byte> bytes;
