@@ -51,6 +51,7 @@ bits decode::read(int no_of_bits) {
 			input_bits.push_back(next_byte / i);
 			next_byte /= i;
 		}
+		no_of_bits -= 8;
 	}
 	if (no_of_bits) {
 		byte next_byte = read();
@@ -68,15 +69,15 @@ bits decode::read(int no_of_bits) {
 }
 
 void decode::start_decode() {
-	while(!input.eof())
+	while(!input.eof()) {
+		printf("%d %d %d\n", input.tellg(), output.tellp(), dict.next_length());
 		write(dict.decode(read(dict.next_length())));
+	}
 }
 
 decode::decode (const char *input_file, const char *output_file) {
 	input.open(input_file, std::ios::in | std::ios::binary);
 	output.open(output_file, std::ios::out | std::ios::binary);
-	buffer = bits(0);
-	dict = dictionary();
 }
 
 #endif
