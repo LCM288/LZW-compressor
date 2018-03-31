@@ -1,5 +1,3 @@
-#include<vector>
-#include<bits.h>
 #include<trie.h>
 
 class dictionary {
