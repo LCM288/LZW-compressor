@@ -49,7 +49,7 @@ bits decode::read(int no_of_bits) {
 		byte next_byte = read();
 		for (int i = 128; i; i /= 2) {
 			input_bits.push_back(next_byte / i);
-			next_byte /= i;
+			next_byte %= i;
 		}
 		no_of_bits -= 8;
 	}
@@ -62,17 +62,15 @@ bits decode::read(int no_of_bits) {
 			}
 			else
 				buffer.push_back(next_byte / i);
-			next_byte /= i;
+			next_byte %= i;
 		}
 	}
 	return input_bits;
 }
 
 void decode::start_decode() {
-	while(!input.eof()) {
-		printf("%d %d %d\n", input.tellg(), output.tellp(), dict.next_length());
+	while(!input.eof())
 		write(dict.decode(read(dict.next_length())));
-	}
 }
 
 decode::decode (const char *input_file, const char *output_file) {
