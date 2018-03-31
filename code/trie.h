@@ -1,4 +1,3 @@
-#include<vector>
 #include<bits.h>
 
 class trie;
