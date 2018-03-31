@@ -96,9 +96,6 @@ bytes dictionary::decode(bits raw) {
 dictionary::dictionary() {
 	size = 0;
 	len = 0;
-	cur = bytes(0);
-	words = std::vector<bytes>(0);
-	dictionary_tree = trie();
 	for (int i = 0; i < 256; i++)
 		add_entry(byte(i));
 }
