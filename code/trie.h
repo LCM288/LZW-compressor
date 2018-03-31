@@ -6,15 +6,15 @@ class trie;
 class node {
 	friend class trie;
 	private:
-		int val;
-		std::vector<node*> child(256);
+		int val;							// value stored on the node
+		std::vector<node*> child(256);					// children of the node
 		node();								// constructor
 		~node();							// destructor
 }
 
 class trie {
 	private:
-		node* cur, root;
+		node* cur, root;			// store the current position and the root of the trie
 		static int byte2int (byte) const;	// convert byte to int (0~255)
 	public:
 		bool exist_child(byte) const;		// check if current node has a corresponding child
