@@ -17,7 +17,6 @@ class decode {
 	public:
 		void start_decode();				// start decode the file
 		decode(const char*, const char*);	// constructor
-		~decode();							// destructor
 };
 
 void decode::write(byte output_byte) {
@@ -71,6 +70,13 @@ bits decode::read(int no_of_bits) {
 void decode::start_decode() {
 	while(!input.eof())
 		write(dict.decode(read(dict.next_length())));
+}
+
+decode::decode (const char *input_file, const char *output_file) {
+	input.open(input_file, std::ios::in | std::ios::binary);
+	output.open(output_file, std::ios::out | std::ios::binary);
+	buffer = bits(0);
+	dict = dictionary();
 }
 
 #endif
