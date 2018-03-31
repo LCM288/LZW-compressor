@@ -61,7 +61,7 @@ void dictionary::increase_size() {
 }
 
 int dictionary::next_length() const {
-	if (size == (size & -size))
+	if (size == (size & -size) && cur.size())
 		return len + 1;
 	else
 		return len;
