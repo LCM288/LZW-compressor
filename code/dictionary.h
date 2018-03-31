@@ -11,17 +11,13 @@ class dictionary {
 		void update_cur(byte);						// update current position of dictionary_tree
 		void add_entry(byte);						// add new entry to dictionary_tree
 		static bits code2bits(code) const;			// convert code to bits
+		static code bits2code(bits) const;			// convert bits to code
 		void increase_size();						// increase size and len
 	public:
 		int next_length() const;					// return the next encoded bits' length
 		bits encode(byte);							// return the next encoded bits
-		bytes decode(code);							// return the next decoded bytes
+		bytes decode(bits);							// return the next decoded bytes
 		dictionary();								// constructor
-		~dictionary();								// desctructor
-		dictionary(const dictionary&);				// copy constructor
-		dictionary& operator= (const dictionary&);	// copy assignment
-		dictionary(dictionary&&);					// move constrctor
-		dictionary& operator= (dictionary&&);		// move assignment
 }
 
 bool dictionary::check_exist(byte next_byte) const {
@@ -34,6 +30,7 @@ void dictionary::update_cur(byte next_byte) {
 }
 
 void dictionary:: add_entry(byte next_byte) {
+	cur.push_back(next_byte);
 	dictionary_tree.add_new_node(next_byte, code(size));
 	increase_size();
 	words.push_back(cur);
@@ -48,6 +45,13 @@ static bits dictionary::code2bits(code val) const {
 	}
 	std::reverse(tmp.begin(), tmp.end());
 	return tmp;
+}
+
+static code dictionary::bits2code(bits raw) const {
+	int val = 0;
+	for (auto a_bit: raw)
+		val = val * 2 + a_bit[0];
+	return code(val);
 }
 
 void dictionary::increase_size() {
@@ -76,11 +80,22 @@ bits dictionary::encode(byte next_byte) {
 	}
 }
 
-bytes dictionary::decode(code val) {
+bytes dictionary::decode(bits raw) {
+	code val = bits2code(raw);
 	bytes data = words[int(val)];
 	if (cur.size())
 		add_entry(data[0]);
 	for (auto next_byte: data)
 		update_cur(next_byte);
 	return data;
+}
+
+dictionary::dictionary() {
+	size = 256;
+	len = 8;
+	cur = bytes(0);
+	words = std::vector<bytes>(0);
+	diciontary_tree = trie();
+	for (int i = 0; i < 256; i++)
+		add_entry(byte(i));
 }
