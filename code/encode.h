@@ -63,8 +63,6 @@ void encode::start_encode() {
 encode::encode (const char *input_file, const char *output_file) {
 	input.open(input_file, std::ios::in | std::ios::binary);
 	output.open(output_file, std::ios::out | std::ios::binary);
-	buffer = bits(0);
-	dict = dictionary();
 }
 
 #endif
