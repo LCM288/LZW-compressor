@@ -32,7 +32,7 @@ void dictionary::update_cur(byte next_byte) {
 	cur.push_back(next_byte);
 }
 
-void dictionary:: add_entry(byte next_byte) {
+void dictionary::add_entry(byte next_byte) {
 	cur.push_back(next_byte);
 	dictionary_tree.add_new_node(next_byte, code(size));
 	increase_size();
@@ -72,7 +72,16 @@ int dictionary::next_length() const {
 
 bits dictionary::encode(byte next_byte) {
 	if (check_exist(next_byte)) {
+		code val = dictionary_tree.get_val();
 		update_cur(next_byte);
+		if (int(dictionary_tree.get_val()) == size - 1) {			// if the code is too new, it cannot be decoded
+			increase_size();
+			words.push_back(cur);
+			cur.clear();
+			dictionary_tree.reset();
+			update_cur(next_byte);
+			return code2bits(val);
+		}
 		return bits(0);
 	}
 	else {
@@ -89,6 +98,7 @@ bytes dictionary::decode(bits raw) {
 	bytes data = words[int(val)];
 	if (cur.size())
 		add_entry(data[0]);
+	dictionary_tree.reset();
 	for (auto next_byte: data)
 		update_cur(next_byte);
 	return data;
