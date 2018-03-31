@@ -6,15 +6,14 @@ class encode {
 	private:
 		std::ifstream input;				// input file stream
 		std::ofstream output;				// output file stream
-		bits buffer;					// store the bits that have not been output
-		dictionary dict;				// the dictionary
+		bits buffer;						// store the bits that have not been output
+		dictionary dict;					// the dictionary
 		void write(byte) const;				// write a specific byte
-		void write(bits);				// write to output file
-		byte read() const;				// read from input file
+		void write(bits);					// write to output file
+		byte read() const;					// read from input file
 	public:
-		void start_encode() const;			// start encode the file
-		encode(const char*, const char*);		// constructor
-		~encode();					// destructor
+		void start_encode();				// start encode the file
+		encode(const char*, const char*);	// constructor
 }
 
 void encode::write(byte output_byte) const {
@@ -53,7 +52,7 @@ byte encode::read() const {
 	return input_byte;
 }
 
-void encode::start_encode() const {
+void encode::start_encode() {
 	while (!input.eof())
 		write(dict.encode(read()));
 }
