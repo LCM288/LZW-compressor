@@ -2,7 +2,7 @@
 
  node {
 		code val;							// value stored on the node
-		std::vector<node*> child(256);					// children of the node
+		node* child[256];						// children of the node
 		node();								// constructor
 		node(code);							// constructor
 		~node();							// destructor
@@ -15,7 +15,7 @@ class trie {
 	public:
 		int get_val() const;			// get value of current position
 		bool exist_child(byte) const;		// check if current node has a corresponding child
-		void add_new_node(byte, int);		// add a new child for current node
+		void add_new_node(byte, code);		// add a new child for current node
 		void go_to_child(byte);			// change current position to the child node
 		void reset();				// reset current position to root
 		trie();					// constructor
