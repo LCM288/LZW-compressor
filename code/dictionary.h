@@ -1,5 +1,8 @@
-#include<trie.h>
+#include"trie.h"
 #include<algorithm>
+
+#ifndef DICTIONARY_H
+#define DICTIONARY_H
 
 class dictionary {
 	private:
@@ -10,15 +13,15 @@ class dictionary {
 		bool check_exist(byte) const;				// check if adding next_byte still exists in dictionary_tree
 		void update_cur(byte);						// update current position of dictionary_tree
 		void add_entry(byte);						// add new entry to dictionary_tree
-		static bits code2bits(code) const;			// convert code to bits
-		static code bits2code(bits) const;			// convert bits to code
+		bits code2bits(code);						// convert code to bits
+		static code bits2code(bits);				// convert bits to code
 		void increase_size();						// increase size and len
 	public:
 		int next_length() const;					// return the next encoded bits' length
 		bits encode(byte);							// return the next encoded bits
 		bytes decode(bits);							// return the next decoded bytes
 		dictionary();								// constructor
-}
+};
 
 bool dictionary::check_exist(byte next_byte) const {
 	return dictionary_tree.exist_child(next_byte);
@@ -37,20 +40,20 @@ void dictionary:: add_entry(byte next_byte) {
 	cur.clear();
 }
 
-static bits dictionary::code2bits(code val) const {
+bits dictionary::code2bits(code val) {
 	bits tmp;
 	for (int i = 0; i < len; i++) {
-		tmp.push_back(std::bitset<1> (val % 2));
-		val /= 2;
+		tmp.push_back((int(val) % 2));
+		val = code(int(val) / 2);
 	}
 	std::reverse(tmp.begin(), tmp.end());
 	return tmp;
 }
 
-static code dictionary::bits2code(bits raw) const {
+code dictionary::bits2code(bits raw) {
 	int val = 0;
 	for (auto a_bit: raw)
-		val = val * 2 + a_bit[0];
+		val = val * 2 + a_bit;
 	return code(val);
 }
 
@@ -61,7 +64,7 @@ void dictionary::increase_size() {
 }
 
 int dictionary::next_length() const {
-	if (size == (size & -size) && cur.size())
+	if (size == (size & -size))
 		return len + 1;
 	else
 		return len;
@@ -95,7 +98,9 @@ dictionary::dictionary() {
 	len = 0;
 	cur = bytes(0);
 	words = std::vector<bytes>(0);
-	diciontary_tree = trie();
+	dictionary_tree = trie();
 	for (int i = 0; i < 256; i++)
 		add_entry(byte(i));
 }
+
+#endif
