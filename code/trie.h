@@ -1,10 +1,6 @@
 #include<bits.h>
 
-class trie;
-
-class node {
-	friend class trie;
-	private:
+ node {
 		code val;							// value stored on the node
 		std::vector<node*> child(256);					// children of the node
 		node();								// constructor
