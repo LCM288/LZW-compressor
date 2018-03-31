@@ -22,16 +22,19 @@ trie:
 dictionary:
 	private:
 		int size, len;					// size of the dictionary, length of bits
+		bytes cur;					// cur bytes
 		vector<bytes> words;				// corresponding bytes of the index
 		trie dictionary_tree;				// a trie storing the dictionary
 		bool check_exist(byte next_byte) const;		// check if adding next_byte still exists in dictionary_tree
 		void update_cur(byte next_byte);		// update current position of dictionary_tree
 		void add_entry(byte next_byte);			// add new entry to dictionary_tree
-		static bits int2bits(int val) const;		// convert integer to bits
+		static bits code2bits(code val) const;		// convert integer to bits
+		static code bits2code(bits raw) const;		// convert bits to code
 		void increase_size();				// increase size and len
 	public:
+		int next_length() const;			// return the next encoded bits' length
 		bits encode(byte next_byte)			// return the next encoded bits
-		bytes decode(int val)				// return the next decoded bytes
+		bytes decode(bits raw)				// return the next decoded bytes
 
 encode:
 	private:
