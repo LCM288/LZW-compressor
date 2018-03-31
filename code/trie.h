@@ -17,6 +17,7 @@ class trie {
 		node* cur, root;			// store the current position and the root of the trie
 		static int byte2int (byte) const;	// convert byte to int (0~255)
 	public:
+		int get_val() const;			// get value of current position
 		bool exist_child(byte) const;		// check if current node has a corresponding child
 		void add_new_node(byte, int);		// add a new child for current node
 		void go_to_child(byte);			// change current position to the child node
