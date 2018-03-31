@@ -4,6 +4,8 @@ bit:	bitset<1>;
 bytes: vector<byte>;
 bits: vector<bit>;
 
+code: same as (int) but require explicit type case
+
 node:
 	int val;
 	vector<node*> child(256);
@@ -38,18 +40,25 @@ dictionary:
 
 encode:
 	private:
-		ifstream input;
-		ofstream output;
-		void write(bits output_bits) const;		// write to the output file
-		byte read() const;				// read from the input file
+		ifstream input;					// input file stream
+		ofstream output;				// output file stream
+		bits buffer					// store the bits that have not been output
+		dictionary dict;				// the dictionary
+		void write(bytes output_bytes) const;		// write a specific byte
+		void write(bits output_bits);			// write to output file
+		byte read() const;				// read from input file
 	public:
-		void start_encode()				// start decode
+		void start_encode();				// start decode
 
 decode:
 	private:
-		ifstream input;
-		ofstream output;
-		void write(byte output_byte) const;		// write to the output file
-		bits read(int no_of_bits) const;		// read from the input file
+		ifstream input;					// input file stream
+		ofstream output;				// output file stream
+		bits buffer;					// store the bits that have not been input
+		dictionary dict;				// the dictionary
+		void write(byte output_byte) const;		// write to output file
+		void write(bytes output_bytes) const;		// write to output file
+		byte read() const;				// read a byte
+		bits read(int no_of_bits);			// read from input file
 	public:
 		void start_decode()				// start decode
