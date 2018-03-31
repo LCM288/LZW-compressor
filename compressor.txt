@@ -13,6 +13,7 @@ trie:
 		node* cur, root;				// the current position and root in the trie
 		static int byte2int(byte a_byte) const;		// convert byte to int
 	public:
+		int get_val() const;				// get value of current position
 		bool exist_child(byte next_byte) const;		// check if current node has a corresponding child
 		void add_new_node(byte next_byte);		// add a new child for current node
 		void go_to_child(byte next_byte);		// change current position to the child node
@@ -20,13 +21,15 @@ trie:
 
 dictionary:
 	private:
-		int _size;					// size of the dictionary
+		int size, len;					// size of the dictionary, length of bits
 		vector<bytes> words;				// corresponding bytes of the index
 		trie dictionary_tree;				// a trie storing the dictionary
 		bool check_exist(byte next_byte) const;		// check if adding next_byte still exists in dictionary_tree
 		void update_cur(byte next_byte);		// update current position of dictionary_tree
+		void add_entry(byte next_byte);			// add new entry to dictionary_tree
+		static bits int2bits(int val) const;		// convert integer to bits
+		void increase_size();				// increase size and len
 	public:
-		int size() const;				// return the size of the dictionary
 		bits encode(byte next_byte)			// return the next encoded bits
 		bytes decode(int val)				// return the next decoded bytes
 
