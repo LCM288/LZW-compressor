@@ -58,7 +58,7 @@ code dictionary::bits2code(bits raw) {
 }
 
 void dictionary::increase_size() {
-	if (size == (size & -size))
+	if (size == (size & -size) && size >= 2)
 		len++;
 	size++;
 }
@@ -79,6 +79,7 @@ bits dictionary::encode(byte next_byte) {
 		add_entry(next_byte);
 		code val = dictionary_tree.get_val();
 		dictionary_tree.reset();
+		update_cur(next_byte);
 		return code2bits(val);
 	}
 }
@@ -95,7 +96,7 @@ bytes dictionary::decode(bits raw) {
 
 dictionary::dictionary() {
 	size = 0;
-	len = 0;
+	len = 1;
 	for (int i = 0; i < 256; i++)
 		add_entry(byte(i));
 }
