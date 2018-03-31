@@ -5,10 +5,10 @@ class trie;
 class node {
 	friend class trie;
 	private:
-		int val;							// value stored on the node
+		code val;							// value stored on the node
 		std::vector<node*> child(256);					// children of the node
 		node();								// constructor
-		node(int);							// constructor
+		node(code);							// constructor
 		~node();							// destructor
 }
 
