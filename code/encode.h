@@ -58,6 +58,14 @@ byte encode::read() {
 void encode::start_encode() {
 	while (!input.eof())
 		write(dict.encode(read()));
+	if (buffer.size()) {
+		while (buffer.size() < 8) buffer.push_back(0);
+		byte output_byte = 0;
+		for (auto a_bit: buffer)
+			output_byte = output_byte * 2 + a_bit;
+		write(output_byte);
+		buffer.clear();
+	}
 }
 
 encode::encode (const char *input_file, const char *output_file) {
