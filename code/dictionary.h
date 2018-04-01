@@ -17,6 +17,7 @@ class dictionary {
 		static code bits2code(bits);				// convert bits to code
 		void increase_size();						// increase size and len
 	public:
+		int get_size() const{ return size; };
 		int next_length() const;					// return the next encoded bits' length
 		bits encode(byte);							// return the next encoded bits
 		bytes decode(bits);							// return the next decoded bytes
@@ -64,7 +65,8 @@ void dictionary::increase_size() {
 }
 
 int dictionary::next_length() const {
-	if (size == (size & -size))
+	int next_size = size + 1;
+	if (next_size == (next_size & -next_size) || size == (size & -size) && size >= 2)
 		return len + 1;
 	else
 		return len;
