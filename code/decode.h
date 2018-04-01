@@ -69,8 +69,11 @@ bits decode::read(int no_of_bits) {
 }
 
 void decode::start_decode() {
-	while(!input.eof())
-		write(dict.decode(read(dict.next_length())));
+	while(!input.eof()) {
+		bits tmp = read(dict.next_length());
+		if (!input.eof())
+			write(dict.decode(tmp));
+	}
 }
 
 decode::decode (const char *input_file, const char *output_file) {
