@@ -7,22 +7,25 @@ bits: vector<bit>;
 code: same as (int) but require explicit type case
 
 node:
-	int val;
-	vector<node*> child(256);
+	code val;
+	map<byte, node*> child;
 	
 trie:
 	private:
 		node* cur, root;				// the current position and root in the trie
-		static int byte2int(byte a_byte) const;		// convert byte to int
 	public:
 		int get_val() const;				// get value of current position
 		bool exist_child(byte next_byte) const;		// check if current node has a corresponding child
 		void add_new_node(byte next_byte);		// add a new child for current node
 		void go_to_child(byte next_byte);		// change current position to the child node
 		void reset();					// reset current position to root
+		void reconstruct();				// reconstruct the trie
+		trie();						// constructor
+		~trie();					// destructor
 
 dictionary:
 	private:
+		static const int reconstruct_size = 65536;	// reconstruct size
 		int size, len;					// size of the dictionary, length of bits
 		bytes cur;					// cur bytes
 		vector<bytes> words;				// corresponding bytes of the index
@@ -33,32 +36,41 @@ dictionary:
 		static bits code2bits(code val) const;		// convert integer to bits
 		static code bits2code(bits raw) const;		// convert bits to code
 		void increase_size();				// increase size and len
+		void reconstruct();				// reconstruct the dictionary
 	public:
+		int get_size() const{ return size; };
 		int next_length() const;			// return the next encoded bits' length
 		bits encode(byte next_byte)			// return the next encoded bits
 		bytes decode(bits raw)				// return the next decoded bytes
+		dictionary();					// constructor
 
 encode:
 	private:
 		ifstream input;					// input file stream
 		ofstream output;				// output file stream
+		std::streampos begin, end;			// begin and end position of the input file
+		long long input_size, output_size;		// size of input and output file
 		bits buffer					// store the bits that have not been output
 		dictionary dict;				// the dictionary
-		void write(bytes output_bytes) const;		// write a specific byte
+		void write(bytes output_bytes);			// write a specific byte
 		void write(bits output_bits);			// write to output file
-		byte read() const;				// read from input file
+		byte read();					// read from input file
 	public:
 		void start_encode();				// start decode
+		encode(const char*, const char*);		// constructor
 
 decode:
 	private:
 		ifstream input;					// input file stream
 		ofstream output;				// output file stream
+		std::streampos begin, end;			// begin and end position of the input file
+		long long input_size, output_size;		// size of input and output file
 		bits buffer;					// store the bits that have not been input
 		dictionary dict;				// the dictionary
-		void write(byte output_byte) const;		// write to output file
-		void write(bytes output_bytes) const;		// write to output file
-		byte read() const;				// read a byte
+		void write(byte output_byte);			// write to output file
+		void write(bytes output_bytes);			// write to output file
+		byte read();					// read a byte
 		bits read(int no_of_bits);			// read from input file
 	public:
 		void start_decode()				// start decode
+		decode(const char*, const char*);		// constructor
