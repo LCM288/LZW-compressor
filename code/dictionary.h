@@ -1,11 +1,11 @@
 #include"trie.h"
-#include<algorithm>
 
 #ifndef DICTIONARY_H
 #define DICTIONARY_H
 
 class dictionary {
 	private:
+		static const int reconstruct_size = 65536;  // reconstruct size
 		int size, len;								// size of the dictionary, length of bits
 		bytes cur;									// cur bytes
 		std::vector<bytes> words;					// corresponding bytes of the index
@@ -16,6 +16,7 @@ class dictionary {
 		bits code2bits(code);						// convert code to bits
 		static code bits2code(bits);				// convert bits to code
 		void increase_size();						// increase size and len
+		void reconstruct();							// reconstruct the dictionary
 	public:
 		int get_size() const{ return size; };
 		int next_length() const;					// return the next encoded bits' length
@@ -42,12 +43,11 @@ void dictionary::add_entry(byte next_byte) {
 }
 
 bits dictionary::code2bits(code val) {
-	bits tmp;
-	for (int i = 0; i < len; i++) {
-		tmp.push_back((int(val) % 2));
+	bits tmp(len);
+	for (int i = len - 1; i >= 0; i--) {
+		tmp[i] = (int(val) % 2);
 		val = code(int(val) / 2);
 	}
-	std::reverse(tmp.begin(), tmp.end());
 	return tmp;
 }
 
@@ -62,6 +62,16 @@ void dictionary::increase_size() {
 	if (size == (size & -size) && size >= 2)
 		len++;
 	size++;
+}
+
+void dictionary::reconstruct() {
+	size = 0;
+	len = 1;
+	cur.clear();
+	words.clear();
+	dictionary_tree.reconstruct();
+	for (int i = 0; i < 256; i++)
+		add_entry(byte(i));
 }
 
 int dictionary::next_length() const {
@@ -81,8 +91,11 @@ bits dictionary::encode(byte next_byte) {
 			words.push_back(cur);
 			cur.clear();
 			dictionary_tree.reset();
+			bits output = code2bits(val);
+			if (size == reconstruct_size)
+				reconstruct();
 			update_cur(next_byte);
-			return code2bits(val);
+			return output;
 		}
 		return bits(0);
 	}
@@ -90,8 +103,11 @@ bits dictionary::encode(byte next_byte) {
 		add_entry(next_byte);
 		code val = dictionary_tree.get_val();
 		dictionary_tree.reset();
+		bits output = code2bits(val);
+		if (size == reconstruct_size)
+			reconstruct();
 		update_cur(next_byte);
-		return code2bits(val);
+		return output;
 	}
 }
 
@@ -103,6 +119,8 @@ bytes dictionary::decode(bits raw) {
 	dictionary_tree.reset();
 	for (auto next_byte: data)
 		update_cur(next_byte);
+	if (size == reconstruct_size - 1)
+		reconstruct();
 	return data;
 }
 
