@@ -8,6 +8,8 @@ class decode {
 	private:
 		std::ifstream input;				// input file stream
 		std::ofstream output;				// output file stream
+		std::streampos begin, end;			// begin and end position of the input file
+		long long input_size, output_size;	// size of input and output file
 		bits buffer;						// store the bits that have not been input
 		dictionary dict;					// the dictionary
 		void write(byte);					// write to output file
@@ -22,6 +24,7 @@ class decode {
 void decode::write(byte output_byte) {
 	char tmp = output_byte;
 	output.write(&tmp, 1);
+	output_size += 1;
 }
 
 void decode::write(bytes output_bytes) {
@@ -32,6 +35,7 @@ void decode::write(bytes output_bytes) {
 byte decode::read() {
 	char tmp;
 	input.read(&tmp, 1);
+	input_size += 1;
 	return (unsigned char)(tmp);
 }
 
@@ -71,14 +75,23 @@ bits decode::read(int no_of_bits) {
 void decode::start_decode() {
 	while(!input.eof()) {
 		bits tmp = read(dict.next_length());
+		if (!rand())
+			printf("Deompressed %.2lf%% (%lld / %lld)\n", 100. * input_size / ((long long) (end - begin)), 
+														  input_size, (long long) (end - begin));
 		if (!input.eof())
 			write(dict.decode(tmp));
 	}
+	printf("Deompressed 100.00%% (%lld / %lld)\n", (long long) (end - begin), (long long) (end - begin));
 }
 
 decode::decode (const char *input_file, const char *output_file) {
 	input.open(input_file, std::ios::in | std::ios::binary);
 	output.open(output_file, std::ios::out | std::ios::binary);
+	input_size = output_size = 0;
+	begin = input.tellg();
+	input.seekg (0, std::ios::end);
+	end = input.tellg();
+	input.seekg (0, std::ios::beg);
 }
 
 #endif
