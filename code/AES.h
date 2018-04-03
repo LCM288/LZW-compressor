@@ -55,22 +55,22 @@ void sub_bytes(){
 
 void shift_rows(){
 	bytes tem;
-	tem[0] = block[4]; // rotate over 1 byte
+	tem = block[4]; // rotate over 1 byte
 	block[4] = block[5];
 	block[5] = block[6];
 	block[6] = block[7];
-	block[7] = tem[0];
-	tem[0] = block[8]; // rotate over 2 byte
+	block[7] = tem;
+	tem = block[8]; // rotate over 2 byte
 	block[8] = block[10];
-	block[10] = tem[0];
-	tem[0] = block[9];
+	block[10] = tem;
+	tem = block[9];
 	block[9] = block[11];
-	block[11] = tem[0];
-	tem[0] = block[12]; // rotate over 3 byte
+	block[11] = tem;
+	tem = block[12]; // rotate over 3 byte
 	block[12] = block[15];
 	block[15] = block[14];
 	block[14] = block[13];
-	block[13] = tem[0];
+	block[13] = tem;
 }
 
 void mix_columns(){
@@ -100,22 +100,22 @@ void r_sub_bytes(){
 
 void r_shift_rows(){
 	bytes tem;
-	tem[0] = block[12]; // rotate over 1 byte
+	tem = block[12]; // rotate over 1 byte
 	block[12] = block[13];
 	block[13] = block[14];
 	block[14] = block[15];
-	block[15] = tem[0];
-	tem[0] = block[8]; // rotate over 2 byte
+	block[15] = tem;
+	tem = block[8]; // rotate over 2 byte
 	block[8] = block[10];
-	block[10] = tem[0];
-	tem[0] = block[9];
+	block[10] = tem;
+	tem = block[9];
 	block[9] = block[11];
-	block[11] = tem[0];
-	tem[0] = block[4]; // rotate over 3 byte
+	block[11] = tem;
+	tem = block[4]; // rotate over 3 byte
 	block[4] = block[7];
 	block[7] = block[6];
 	block[6] = block[5];
-	block[5] = tem[0];
+	block[5] = tem;
 }
 
 void r_mix_columns(){
