@@ -9,7 +9,6 @@ class encode {
 	private:
 		encrypt encryption;					// encryption
 		std::ifstream input;				// input file stream
-//		std::ofstream output;				// output file stream
 		std::streampos begin, end;			// begin and end position of the input file
 		long long input_size, output_size;	// size of input and output file
 		long long raw_size;					// size of raw file
@@ -88,7 +87,6 @@ void encode::start_encode() {
 
 encode::encode (const char *input_file, const char *output_file, const char *password) {
 	input.open(input_file, std::ios::in | std::ios::binary);
-//	output.open(output_file, std::ios::out | std::ios::binary);
 	encryption.set_encrypt(password, output_file);
 	input_size = output_size = 0;
 	begin = input.tellg();
