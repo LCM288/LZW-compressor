@@ -42,6 +42,8 @@ byte decrypt::get_next_decrypted() {
 
 void decrypt::set_decrypt(const char* password, const char* input_file) {
 	input.open(input_file, std::ios::in | std::ios::binary);
+	cipher_key = SHA256(password);
+	key_schedule();
 }
 
 
