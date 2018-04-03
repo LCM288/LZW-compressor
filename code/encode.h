@@ -7,18 +7,19 @@
 
 class encode {
 	private:
-		encrypt encryption;				// encryption
+		encrypt encryption;					// encryption
 		std::ifstream input;				// input file stream
 //		std::ofstream output;				// output file stream
 		std::streampos begin, end;			// begin and end position of the input file
 		long long input_size, output_size;	// size of input and output file
+		long long raw_size;					// size of raw file
 		bits buffer;						// store the bits that have not been output
 		dictionary dict;					// the dictionary
 		void write(byte);					// add a specific byte to be encrypted
 		void write(bits);					// write to output file
 		byte read();						// read from input file 
 	public:
-		void start_encode();				// start encode the file
+		void start_encode();							// start encode the file
 		encode(const char*, const char*, const char*);	// constructor
 };
 
@@ -78,7 +79,7 @@ void encode::start_encode() {
 		buffer.clear();
 	}
 	while (!encryption.finished()) {
-		write.(byte(0));
+		write(byte(0));
 	}
 	printf("Compressed 100.00%% (%lld / %lld) Compression rate %.2lf%%\n",
 																			(long long) (end - begin), (long long) (end - begin), 
@@ -88,12 +89,26 @@ void encode::start_encode() {
 encode::encode (const char *input_file, const char *output_file, const char *password) {
 	input.open(input_file, std::ios::in | std::ios::binary);
 //	output.open(output_file, std::ios::out | std::ios::binary);
-	encryption = encryption(password, output_file)
-	input_size = output_size = 0;
+	encryption.set_encrypt(password, output_file);
+	input_size = 0;
 	begin = input.tellg();
-	input.seekg (0, std::ios::end);
+	input.seekg(0, std::ios::end);
 	end = input.tellg();
-	input.seekg (0, std::ios::beg);
+	input.seekg(0, std::ios::beg);
+	std::ofstream output(output_file, std::ios::out | std::ios::binary);
+	raw_size = (long long) (end - begin);
+	long long tmp = raw_size;
+	byte next_byte[8];
+	for (int i = 7; i >= 0; i--) {
+		next_byte[i] = byte(tmp % 256);
+		tmp /= 256;
+	}
+	for (int i = 0; i < 8; i++) {
+		char tmp = char(next_byte[i]);
+		output.write(&tmp, 1);
+	}
+	output_size = 8;
+	output.close();
 }
 
 #endif
