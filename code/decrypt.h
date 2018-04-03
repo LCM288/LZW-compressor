@@ -20,6 +20,16 @@ void decrypt::read_n_decrypt() {
 	for (int i = 0; i < 16; i++)
 		block.push_back(tmp[i]);
 	// do the decryption here
+	AES decryption;
+	for (int i=10;i>0;i--){
+		decryption.r_add_round_key(i);
+		if (i<10)				// do not run at round 10
+			decryption.r_mix_columns();
+		decryption.r_shift_rows();
+		decryption.r_sub_bytes();
+	}
+	decryption.r_add_round_key(0); // xor with cipher key
+	// finish decryption
 }
 
 byte decrypt::get_next_decrypted() {
