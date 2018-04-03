@@ -20,7 +20,7 @@ class AES {
 		void r_add_round_key(bytes);				// the reverse add round key step
 };
 
-void key_schedule(){
+void AES::key_schedule(){
 	for (int i=0;i<16;i++){
 		if (i==0){
 			round_keys[0][i] = cipher_key[i]^forward_S[cipher_key[i+1]]^rcon[0];
@@ -47,13 +47,13 @@ void key_schedule(){
 	}
 }
 
-void sub_bytes(){
+void AES::sub_bytes(){
 	for (int i=0;i<16;i++){
 		block[i] = forward_S[block[i]];
 	}
 }
 
-void shift_rows(){
+void AES::shift_rows(){
 	bytes tem;
 	tem = block[4]; // rotate over 1 byte
 	block[4] = block[5];
@@ -73,7 +73,7 @@ void shift_rows(){
 	block[13] = tem;
 }
 
-void mix_columns(){
+void AES::mix_columns(){
 	bytes tem[4];
 	for (int i =0;i<4;i++){
 		tem[0] = 2*block[i*4]^3*block[i*4+1]^1*block[i*4+2]^1*block[i*4+3];
@@ -87,18 +87,18 @@ void mix_columns(){
 	}
 }
 
-void add_round_key(bytes turn){
+void AES::add_round_key(bytes turn){
 	for (int i = 0; i<16;i++)
 		block[i] = block[i]^round_keys[turn][i];
 }
 
-void r_sub_bytes(){
+void AES::r_sub_bytes(){
 	for (int i=0;i<16;i++){
 		block[i] = inverse_S[block[i]];
 	}
 }
 
-void r_shift_rows(){
+void AES::r_shift_rows(){
 	bytes tem;
 	tem = block[12]; // rotate over 1 byte
 	block[12] = block[13];
@@ -118,7 +118,7 @@ void r_shift_rows(){
 	block[5] = tem;
 }
 
-void r_mix_columns(){
+void AES::r_mix_columns(){
 	bytes tem[4];
 	for (int i =0;i<4;i++){
 		tem[0] = 14*block[i*4]^11*block[i*4+1]^13*block[i*4+2]^9*block[i*4+3];
@@ -132,7 +132,7 @@ void r_mix_columns(){
 	}
 }
 
-void r_add_round_key(bytes type){
+void AES::r_add_round_key(bytes type){
 	add_round_key(turn);
 }
 
