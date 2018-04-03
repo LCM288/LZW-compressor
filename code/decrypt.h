@@ -1,3 +1,4 @@
+#include"AES.h"
 #include<fstream>
 
 #ifndef DECRYPT_H
@@ -10,7 +11,8 @@ class decrypt: public AES {
 	public:
 		bytes get_next_decrypted();				// get the next decrypted byte
 		bool finished();					// return true if block is empty
-		decrypt(const char* password, const char* input_file)	// constructor
+		decrypt();						// constructor
+		decrypt(const char* password, const char* input_file);	// constructor
 };
 		
 #endif
