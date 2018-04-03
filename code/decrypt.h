@@ -10,7 +10,6 @@ class decrypt: public AES {
 		void read_n_decrypt();						// read a block from file and decrypt
 	public:
 		byte get_next_decrypted();					// get the next decrypted byte
-		bool finished();							// return true if block is empty
 		void set_decrypt(const char*, const char*);	// set up the variables
 		decrypt() {}								// constructor
 };
