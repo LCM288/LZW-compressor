@@ -17,15 +17,14 @@ class encrypt: public AES {
 
 void encrypt::encrypt_n_write() {
 	// do the encryption here
-	AES encryption;
-	encryption.key_schedule(); // not yet decided, generate key?
-	encryption.add_round_key(0); // xor with cipher key
+	key_schedule(); // not yet decided, generate key?
+	add_round_key(0); // xor with cipher key
 	for (int i=0;i<10;i++){
-		encryption.sub_bytes(); 
-		encryption.shift_rows();
+		sub_bytes(); 
+		shift_rows();
 		if (i<9) 				// do not run at round 10
-			encryption.mix_columns();
-		encryption.add_round_key(i+1);
+			mix_columns();
+		add_round_key(bytes(i+1));
 	}
 	// finish encryption
 	for (auto next_byte: block) {
