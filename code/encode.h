@@ -90,12 +90,11 @@ encode::encode (const char *input_file, const char *output_file, const char *pas
 	input.open(input_file, std::ios::in | std::ios::binary);
 //	output.open(output_file, std::ios::out | std::ios::binary);
 	encryption.set_encrypt(password, output_file);
-	input_size = 0;
+	input_size = output_size = 0;
 	begin = input.tellg();
 	input.seekg(0, std::ios::end);
 	end = input.tellg();
 	input.seekg(0, std::ios::beg);
-	std::ofstream output(output_file, std::ios::out | std::ios::binary);
 	raw_size = (long long) (end - begin);
 	long long tmp = raw_size;
 	byte next_byte[8];
@@ -103,12 +102,8 @@ encode::encode (const char *input_file, const char *output_file, const char *pas
 		next_byte[i] = byte(tmp % 256);
 		tmp /= 256;
 	}
-	for (int i = 0; i < 8; i++) {
-		char tmp = char(next_byte[i]);
-		output.write(&tmp, 1);
-	}
-	output_size = 8;
-	output.close();
+	for (int i = 0; i < 8; i++)
+		write(next_byte[i]);
 }
 
 #endif
