@@ -49,7 +49,7 @@ dictionary:
 
 encode:
 	private:
-		encrypt encryption;				// encryption
+		encrypt encryption;				// encryption ** new
 		ifstream input;					// input file stream
 		ofstream output;				// output file stream
 		std::streampos begin, end;			// begin and end position of the input file
@@ -60,12 +60,12 @@ encode:
 		void write(bits output_bits);			// write to output file
 		byte read();					// read from input file
 	public:
-		void start_encode();						// start decode ** changed
-		encode(const char* input_file, const char* output_file);	// constructor
+		void start_encode();								// start decode ** changed
+		encode(const char* input_file, const char* output_file, const char* password);	// constructor ** changed
 
 decode:
 	private:
-		decrypt decryption;				// decryption
+		decrypt decryption;				// decryption ** new
 		ifstream input;					// input file stream
 		ofstream output;				// output file stream
 		std::streampos begin, end;			// begin and end position of the input file
@@ -77,8 +77,8 @@ decode:
 		byte read();					// read a decrypted byte ** changed
 		bits read(int no_of_bits);			// read from input file
 	public:
-		void start_decode()						// start decode ** changed
-		decode(const char* input_file, const char* output_file);	// constructor
+		void start_decode()								// start decode ** changed
+		decode(const char* input_file, const char* output_file, const char* password);	// constructor ** changed
 
 AES:
 	protected:
