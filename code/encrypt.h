@@ -36,7 +36,6 @@ bool encrypt::finished() {
 
 void encrypt::set_encrypt(const char* password, const char* output_file) {
 	output.open(output_file, std::ios::out | std::ios::binary);
-	output.seekp(8, std::ios::beg);
 }
 
 #endif
