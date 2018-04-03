@@ -49,6 +49,7 @@ dictionary:
 
 encode:
 	private:
+		encrypt encryption;				// encryption
 		ifstream input;					// input file stream
 		ofstream output;				// output file stream
 		std::streampos begin, end;			// begin and end position of the input file
@@ -64,6 +65,7 @@ encode:
 
 decode:
 	private:
+		decrypt decryption;				// decryption
 		ifstream input;					// input file stream
 		ofstream output;				// output file stream
 		std::streampos begin, end;			// begin and end position of the input file
