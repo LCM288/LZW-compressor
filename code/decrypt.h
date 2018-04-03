@@ -30,14 +30,9 @@ byte decrypt::get_next_decrypted() {
 	block.erase(block.begin());
 	return next_byte;
 }
-/*
-bool decrypt::finished() {
-	return input.eof() && block.empty();
-}
-*/
+
 void decrypt::set_decrypt(const char* password, const char* input_file) {
 	input.open(input_file, std::ios::in | std::ios::binary);
-	input.seekg(8, std::ios::beg);
 }
 
 
