@@ -3,7 +3,7 @@
 #ifndef ENCRYPT_H
 #define ENCRYPT_H
 
-class encrypt: public AES{
+class encrypt: public AES {
 	private:
 		ofstream output;				// output file stream
 		void encrypt_n_write();				// encrypt the block and write to file
