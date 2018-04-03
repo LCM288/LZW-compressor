@@ -1,5 +1,5 @@
-byte:	bitset<8>;
-bit:	bitset<1>;
+byte:	unsigned char;
+bit:	bool;
 
 bytes: vector<byte>;
 bits: vector<bit>;
@@ -105,8 +105,8 @@ encrypt: public AES
 		void encrypt_n_write();				// encrypt the block and write to file
 	public:
 		void add_to_encrypt(byte byte_to_encrypt);		// add the next byte to encrypt
-		bool finished();					// return true if block is empty
-		encrypt(const char* password, const char* output_file)	// constructor
+		bool finished();					// return true if block is empty and reached eof
+		encrypt(const char* password, const char* output_file);	// constructor
 		
 decrypt: public AES
 	private:
@@ -114,5 +114,5 @@ decrypt: public AES
 		void read_n_decrypt();				// read a block from file and decrypt
 	public:
 		bytes get_next_decrypted();				// get the next decrypted byte
-		bool finished();					// return true if block is empty
-		decrypt(const char* password, const char* input_file)	// constructor
+		bool finished();					// return true if block is empty and reached eof
+		decrypt(const char* password, const char* input_file);	// constructor
