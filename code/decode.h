@@ -94,15 +94,12 @@ decode::decode (const char *input_file, const char *output_file, const char *pas
 	begin = input.tellg();
 	input.seekg (0, std::ios::end);
 	end = input.tellg();
-	input.seekg (0, std::ios::beg);
+	input.close();
 	raw_size = 0;
 	for (int i = 0; i < 8; i++) {
-		char tmp;
-		input.read(&tmp, 1);
-		byte next_byte = byte(tmp);
+		byte next_byte = read();
 		raw_size = raw_size * 256 + next_byte;
 	}
-	input.close();
 }
 
 #endif
