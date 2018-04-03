@@ -1,3 +1,5 @@
-timer: no progress
-check error *** : important but no progress
-encryption: ongoing
+timer: no progress, hours
+check error *** : important but no progress, days
+encryption: ongoing, days
+multi-file: no progress, days
+modify compressed file: no progress, weeks???
