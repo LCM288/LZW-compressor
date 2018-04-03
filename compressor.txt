@@ -9,6 +9,9 @@ code: same as (int) but require explicit type case
 node:
 	code val;
 	map<byte, node*> child;
+	node();
+	node(code set_val);
+	~node();
 	
 trie:
 	private:
@@ -52,12 +55,12 @@ encode:
 		long long input_size, output_size;		// size of input and output file
 		bits buffer					// store the bits that have not been output
 		dictionary dict;				// the dictionary
-		void write(bytes output_bytes);			// write a specific byte
+		void write(bytes output_bytes);			// add a specific byte to be encrypted ** changed
 		void write(bits output_bits);			// write to output file
 		byte read();					// read from input file
 	public:
-		void start_encode();				// start decode
-		encode(const char*, const char*);		// constructor
+		void start_encode();						// start decode ** changed
+		encode(const char* input_file, const char* output_file);	// constructor
 
 decode:
 	private:
@@ -69,8 +72,45 @@ decode:
 		dictionary dict;				// the dictionary
 		void write(byte output_byte);			// write to output file
 		void write(bytes output_bytes);			// write to output file
-		byte read();					// read a byte
+		byte read();					// read a decrypted byte ** changed
 		bits read(int no_of_bits);			// read from input file
 	public:
-		void start_decode()				// start decode
-		decode(const char*, const char*);		// constructor
+		void start_decode()						// start decode ** changed
+		decode(const char* input_file, const char* output_file);	// constructor
+
+AES:
+	protected:
+		static const bytes rcon[10];			// the rcon values
+		static const bytes forward_mc, inverse_mc;	// the mixcolumns matrix
+		static const bytes forward_S, inverse_S;	// the S tables
+		bytes cipher_key, round_keys[10];		// the cipher key and 10 round keys (matrix form)
+		bytes block;					// the block being processed
+		int round;					// the current round
+		void key_schedule();				// the key schedule
+		static bytes hash?(const char* password);	// hashing password into 128 bit
+		void sub_bytes();				// the sub bytes step
+		void shift_rows();				// the shift rows step
+		void mix_columns();				// the mix columns step
+		void add_round_key();				// the add round key step
+		void r_sub_bytes();				// the reverse sub bytes step
+		void r_shift_rows();				// the reverse shift rows step
+		void r_mix_columns();				// the reverse mix columns step
+		void r_add_round_key();				// the reverse add round key step
+
+encrypt: public AES
+	private:
+		ofstream output;				// output file stream
+		void encrypt_n_write();				// encrypt the block and write to file
+	public:
+		void add_to_encrypt(byte byte_to_encrypt);		// add the next byte to encrypt
+		bool finished();					// return true if block is empty
+		encrypt(const char* password, const char* output_file)	// constructor
+		
+decrypt: public AES
+	private:
+		ifstream input;					// input file stream
+		void read_n_decrypt();				// read a block from file and decrypt
+	public:
+		bytes get_next_decrypted();				// get the next decrypted byte
+		bool finished();					// return true if block is empty
+		decrypt(const char* password, const char* input_file)	// constructor
