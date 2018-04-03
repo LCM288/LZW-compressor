@@ -8,7 +8,6 @@
 class decode {
 	private:
 		decrypt decryption;					// decryption
-//		std::ifstream input;				// input file stream
 		std::ofstream output;				// output file stream
 		std::streampos begin, end;			// begin and end position of the input file
 		long long input_size, output_size;	// size of input and output file
@@ -86,7 +85,6 @@ void decode::start_decode() {
 }
 
 decode::decode (const char *input_file, const char *output_file, const char *password) {
-//	input.open(input_file, std::ios::in | std::ios::binary);
 	output.open(output_file, std::ios::out | std::ios::binary);
 	decryption.set_decrypt(password, input_file);
 	input_size = output_size = 0;
