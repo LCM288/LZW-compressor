@@ -88,8 +88,13 @@ void AES::mix_columns(){
 }
 
 void AES::add_round_key(bytes turn){
-	for (int i = 0; i<16;i++)
-		block[i] = block[i]^round_keys[turn][i];
+	if (turn == 0){
+		block[i] = block[i]^cipher_key[i];
+	}
+	else{
+		for (int i = 0; i<16;i++)
+			block[i] = block[i]^round_keys[turn-1][i];
+	}
 }
 
 void AES::r_sub_bytes(){
