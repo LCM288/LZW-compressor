@@ -1,0 +1,3 @@
+timer: no progress
+check error *** : important but no progress
+encryption: ongoing
