@@ -27,7 +27,7 @@ void decrypt::read_n_decrypt() {
 		r_shift_rows();
 		r_sub_bytes();
 	}
-	r_add_round_key(0); // xor with cipher key
+	r_add_round_key(0);
 	// finish decryption
 }
 
