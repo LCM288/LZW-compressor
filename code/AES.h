@@ -15,11 +15,11 @@ class AES {
 		void sub_bytes();									// the sub bytes step
 		void shift_rows();									// the shift rows step
 		void mix_columns();									// the mix columns step
-		void add_round_key(bytes);							// the add round key step
+		void add_round_key(int);							// the add round key step
 		void r_sub_bytes();									// the reverse sub bytes step
 		void r_shift_rows();								// the reverse shift rows step
 		void r_mix_columns();								// the reverse mix columns step
-		void r_add_round_key(bytes);						// the reverse add round key step
+		void r_add_round_key(int);						// the reverse add round key step
 };
 
 const byte AES::rcon[9] = {0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80};
@@ -203,7 +203,7 @@ void AES::mix_columns(){
 
 void AES::add_round_key(int turn){
 	for (int i = 0; i < 16; i++)
-		block[i] = block[i]^round_keys[turn][i];	// xor with round keys 1-10
+		block[i] = block[i] ^ round_keys[turn][i];	// xor with round keys 1-10
 }
 
 void AES::r_sub_bytes(){
@@ -237,7 +237,8 @@ void AES::r_mix_columns(){
 }
 
 void AES::r_add_round_key(int turn){
-	add_round_key(turn);
+	for (int i = 0; i < 16; i++)
+		block[i] = block[i] ^ round_keys[turn][i];	// xor with round keys 1-10
 }
 
 #endif
