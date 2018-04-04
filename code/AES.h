@@ -8,7 +8,6 @@ class AES {
 		bytes cipher_key, round_keys[15];					// the cipher key and 15 round keys (matrix form)
 		bytes block;										// the block being processed
 		static const byte rcon[9];							// the rcon values
-		static const bytes forward_mc, inverse_mc;			// the mixcolumns matrix
 		static const bytes forward_S, inverse_S;			// the S tables
 		static unsigned int rightrotate(unsigned int, int);	// right rotate
 		static bytes SHA256(const char*);					// hashing password into 256 bit
@@ -198,17 +197,8 @@ void AES::shift_rows(){
 }
 
 void AES::mix_columns(){
-	bytes tem[4];		// save the new value in tem first
-	for (int i =0;i<4;i++){
-		tem[0] = 2*block[i*4]^3*block[i*4+1]^1*block[i*4+2]^1*block[i*4+3];	//2 3 1 1
-		tem[1] = 1*block[i*4]^2*block[i*4+1]^3*block[i*4+2]^1*block[i*4+3];	//1 2 3 1
-		tem[2] = 1*block[i*4]^1*block[i*4+1]^2*block[i*4+2]^3*block[i*4+3];	//1 1 2 3
-		tem[3] = 3*block[i*4]^1*block[i*4+1]^1*block[i*4+2]^2*block[i*4+3];	//3 1 1 2
-		block[i*4] = tem[0];
-		block[i*4+1] = tem[1];
-		block[i*4+2] = tem[2];
-		block[i*4+3] = tem[3];
-	}
+	// need rewrite
+	// galois multiplication
 }
 
 void AES::add_round_key(int turn){
@@ -242,17 +232,8 @@ void AES::r_shift_rows(){
 }
 
 void AES::r_mix_columns(){
-	bytes tem[4];
-	for (int i = 0;i < 4; i++){
-		tem[0] = 14*block[i*4]^11*block[i*4+1]^13*block[i*4+2]^9*block[i*4+3];	//14 11 13 09
-		tem[1] = 9*block[i*4]^14*block[i*4+1]^11*block[i*4+2]^13*block[i*4+3];	//09 14 11 13
-		tem[2] = 13*block[i*4]^9*block[i*4+1]^14*block[i*4+2]^11*block[i*4+3];	//13 09 14 11
-		tem[3] = 11*block[i*4]^13*block[i*4+1]^9*block[i*4+2]^14*block[i*4+3];	//11 13 09 14
-		block[i*4] = tem[0];
-		block[i*4+1] = tem[1];
-		block[i*4+2] = tem[2];
-		block[i*4+3] = tem[3];
-	}
+	// need rewrite
+	// galois multiplication
 }
 
 void AES::r_add_round_key(int turn){
