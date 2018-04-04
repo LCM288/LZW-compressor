@@ -20,9 +20,9 @@ void decrypt::read_n_decrypt() {
 	for (int i = 0; i < 16; i++)
 		block.push_back(tmp[i]);
 	// do the decryption here
-	for (int i=10;i>0;i--){
-		r_add_round_key(bytes(i));
-		if (i<10)				// do not run at round 10
+	for (int i = 14; i > 0; i--){
+		r_add_round_key(i);
+		if (i < 14)				// do not run at round 14
 			r_mix_columns();
 		r_shift_rows();
 		r_sub_bytes();
