@@ -17,14 +17,13 @@ class encrypt: public AES {
 
 void encrypt::encrypt_n_write() {
 	// do the encryption here
-	key_schedule(); // not yet decided, generate key?
 	add_round_key(0); // xor with cipher key
-	for (int i=0;i<10;i++){
+	for (int i = 1; i < 15; i++){
 		sub_bytes(); 
 		shift_rows();
-		if (i<9) 				// do not run at round 10
+		if (i < 14) 				// do not run at round 14
 			mix_columns();
-		add_round_key(bytes(i+1));
+		add_round_key(i);
 	}
 	// finish encryption
 	for (auto next_byte: block) {
