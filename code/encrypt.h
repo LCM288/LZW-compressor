@@ -17,7 +17,7 @@ class encrypt: public AES {
 
 void encrypt::encrypt_n_write() {
 	// do the encryption here
-	add_round_key(0); // xor with cipher key
+	add_round_key(0);
 	for (int i = 1; i < 15; i++){
 		sub_bytes(); 
 		shift_rows();
