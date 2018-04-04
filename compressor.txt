@@ -51,9 +51,9 @@ encode:
 	private:
 		encrypt encryption;				// encryption
 		ifstream input;					// input file stream
-		ofstream output;				// output file stream
 		std::streampos begin, end;			// begin and end position of the input file
 		long long input_size, output_size;		// size of input and output file
+		long long raw_size;				// size of raw file
 		bits buffer					// store the bits that have not been output
 		dictionary dict;				// the dictionary
 		void write(bytes output_bytes);			// add a specific byte to be encrypted
@@ -66,10 +66,10 @@ encode:
 decode:
 	private:
 		decrypt decryption;				// decryption
-		ifstream input;					// input file stream
 		ofstream output;				// output file stream
 		std::streampos begin, end;			// begin and end position of the input file
 		long long input_size, output_size;		// size of input and output file
+		long long raw_size;				// size of raw file
 		bits buffer;					// store the bits that have not been input
 		dictionary dict;				// the dictionary
 		void write(byte output_byte);			// write to output file
@@ -82,37 +82,38 @@ decode:
 
 AES:
 	protected:
-		static const bytes rcon[10];			// the rcon values
-		static const bytes forward_mc, inverse_mc;	// the mixcolumns matrix
-		static const bytes forward_S, inverse_S;	// the S tables
-		bytes cipher_key, round_keys[10];		// the cipher key and 10 round keys (matrix form)
-		bytes block;					// the block being processed
-		void key_schedule();				// the key schedule
-		static bytes MD5(const char* password);		// hashing password into 128 bit
-		void sub_bytes();				// the sub bytes step
-		void shift_rows();				// the shift rows step
-		void mix_columns();				// the mix columns step
-		void add_round_key(bytes key);			// the add round key step
-		void r_sub_bytes();				// the reverse sub bytes step
-		void r_shift_rows();				// the reverse shift rows step
-		void r_mix_columns();				// the reverse mix columns step
-		void r_add_round_key(bytes key);		// the reverse add round key step
+		bytes cipher_key, round_keys[15];			// the cipher key and 15 round keys
+		bytes block;						// the block being processed
+		static const bytes rcon;				// the rcon values
+		static const bytes m01, m02, m03, m09, m11, m13, m14;	// the multiplication tables
+		static const bytes forward_S, inverse_S;		// the S tables
+		static unsigned int rightrotate(unsigned int, int);	// right rotate
+		static bytes SHA256(const char*);			// hashing password into 256 bit
+		void key_schedule();					// the key schedule
+		void sub_bytes();					// the sub bytes step
+		void shift_rows();					// the shift rows step
+		void mix_columns();					// the mix columns step
+		void add_round_key(int turn);				// the add round key step
+		void r_sub_bytes();					// the reverse sub bytes step
+		void r_shift_rows();					// the reverse shift rows step
+		void r_mix_columns();					// the reverse mix columns step
+		void r_add_round_key(int turn);				// the reverse add round key step
 
 encrypt: public AES
 	private:
-		ofstream output;				// output file stream
-		void encrypt_n_write();				// encrypt the block and write to file
+		ofstream output;						// output file stream
+		void encrypt_n_write();						// encrypt the block and write to file
 	public:
 		void add_to_encrypt(byte byte_to_encrypt);			// add the next byte to encrypt
 		bool finished();						// return true if block is empty and reached eof
-		set_encrypt(const char* password, const char* output_file);	// set up the variables
+		void set_encrypt(const char* password, const char* output_file);// set up the variables
 		encrypt() {}							// constructor
 		
 decrypt: public AES
 	private:
-		ifstream input;					// input file stream
-		void read_n_decrypt();				// read a block from file and decrypt
+		ifstream input;							// input file stream
+		void read_n_decrypt();						// read a block from file and decrypt
 	public:
 		bytes get_next_decrypted();					// get the next decrypted byte
-		set_decrypt(const char* password, const char* input_file);	// set up the variables
+		void set_decrypt(const char* password, const char* input_file);	// set up the variables
 		decrypt() {}							// constructor
