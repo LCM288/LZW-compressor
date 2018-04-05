@@ -1,3 +1,4 @@
+#include"bits.h"
 #include<cstring>
 
 #ifndef AES_H
@@ -5,7 +6,7 @@
 
 class AES {
 	protected:
-		bytes cipher_key, round_keys[15];						// the cipher key and 15 round keys (matrix form)
+		bytes cipher_key, round_keys[15];						// the cipher key and 15 round keys
 		bytes block;											// the block being processed
 		static const bytes rcon;								// the rcon values
 		static const bytes m01, m02, m03, m09, m11, m13, m14;	// the multiplication tables
