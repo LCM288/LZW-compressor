@@ -87,7 +87,6 @@ void encode::start_encode() {
 
 encode::encode (const char *input_file, const char *output_file, const char *password) {
 	input.open(input_file, std::ios::in | std::ios::binary);
-	encryption.set_encrypt(password, output_file);
 	input_size = output_size = 0;
 	begin = input.tellg();
 	input.seekg(0, std::ios::end);
@@ -100,6 +99,13 @@ encode::encode (const char *input_file, const char *output_file, const char *pas
 		next_byte[i] = byte(tmp % 256);
 		tmp /= 256;
 	}
+	std::ofstream output(output_file, std::ios::out | std::ios::binary);
+	for (int i = 0; i < 8; i++) {
+		char tmp = char(next_byte[i]);
+		output.write(&tmp, 1);
+	}
+	output.close();
+	encryption.set_encrypt(password, output_file);
 	for (int i = 0; i < 8; i++)
 		write(next_byte[i]);
 }
