@@ -86,17 +86,25 @@ void decode::start_decode() {
 
 decode::decode (const char *input_file, const char *output_file, const char *password) {
 	output.open(output_file, std::ios::out | std::ios::binary);
-	decryption.set_decrypt(password, input_file);
-	input_size = output_size = 0;
+	input_size = output_size = raw_size = 0;
 	std::ifstream input(input_file, std::ios::in | std::ios::binary);
+	for (int i = 0; i < 8; i++) {
+		char tmp;
+		input.read(&tmp, 1);
+		raw_size = raw_size * 256 + byte(tmp);
+	}
 	begin = input.tellg();
 	input.seekg (0, std::ios::end);
 	end = input.tellg();
 	input.close();
-	raw_size = 0;
-	for (int i = 0; i < 8; i++) {
-		byte next_byte = read();
-		raw_size = raw_size * 256 + next_byte;
+	decryption.set_decrypt(password, input_file);
+	long long raw_size_check = 0;
+	for (int i = 0; i < 8; i++)
+		raw_size_check = raw_size_check * 256 + read();
+	if (raw_size != raw_size_check) {
+		printf("Error 01\n");
+		printf("The file maybe corrupted or the password is wrong.");
+		exit(1);
 	}
 }
 
