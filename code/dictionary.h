@@ -5,7 +5,11 @@
 
 class dictionary {
 	private:
-		static const int reconstruct_size = 65536;  // reconstruct size
+		#ifdef USE_MAP
+		static const int reconstruct_size = 1048576;// reconstruct size
+		#else
+		static const int reconstruct_size = 65536;	// reconstruct size
+		#endif
 		int size, len;								// size of the dictionary, length of bits
 		bytes cur;									// cur bytes
 		std::vector<bytes> words;					// corresponding bytes of the index
