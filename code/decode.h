@@ -1,4 +1,5 @@
 #include"dictionary.h"
+#include"decrypt.h"
 #include<fstream>
 
 #ifndef DECODE_H
@@ -6,10 +7,11 @@
 
 class decode {
 	private:
-		std::ifstream input;				// input file stream
+		decrypt decryption;					// decryption
 		std::ofstream output;				// output file stream
 		std::streampos begin, end;			// begin and end position of the input file
 		long long input_size, output_size;	// size of input and output file
+		long long raw_size;					// size of raw file
 		bits buffer;						// store the bits that have not been input
 		dictionary dict;					// the dictionary
 		void write(byte);					// write to output file
@@ -17,8 +19,8 @@ class decode {
 		byte read();						// read a byte
 		bits read(int);						// read from input file
 	public:
-		void start_decode();				// start decode the file
-		decode(const char*, const char*);	// constructor
+		void start_decode();							// start decode the file
+		decode(const char*, const char*, const char*);	// constructor
 };
 
 void decode::write(byte output_byte) {
@@ -33,10 +35,9 @@ void decode::write(bytes output_bytes) {
 }
 
 byte decode::read() {
-	char tmp;
-	input.read(&tmp, 1);
+	byte tmp = decryption.get_next_decrypted();
 	input_size += 1;
-	return (unsigned char)(tmp);
+	return tmp;
 }
 
 bits decode::read(int no_of_bits) {
@@ -73,25 +74,38 @@ bits decode::read(int no_of_bits) {
 }
 
 void decode::start_decode() {
-	while(!input.eof()) {
+	while(output_size < raw_size) {
 		bits tmp = read(dict.next_length());
 		if (!rand())
 			printf("Deompressed %.2lf%% (%lld / %lld)\n", 100. * input_size / ((long long) (end - begin)), 
 														  input_size, (long long) (end - begin));
-		if (!input.eof())
-			write(dict.decode(tmp));
+		write(dict.decode(tmp));
 	}
 	printf("Deompressed 100.00%% (%lld / %lld)\n", (long long) (end - begin), (long long) (end - begin));
 }
 
-decode::decode (const char *input_file, const char *output_file) {
-	input.open(input_file, std::ios::in | std::ios::binary);
+decode::decode (const char *input_file, const char *output_file, const char *password) {
 	output.open(output_file, std::ios::out | std::ios::binary);
-	input_size = output_size = 0;
+	input_size = output_size = raw_size = 0;
+	std::ifstream input(input_file, std::ios::in | std::ios::binary);
+	for (int i = 0; i < 8; i++) {
+		char tmp;
+		input.read(&tmp, 1);
+		raw_size = raw_size * 256 + byte(tmp);
+	}
 	begin = input.tellg();
 	input.seekg (0, std::ios::end);
 	end = input.tellg();
-	input.seekg (0, std::ios::beg);
+	input.close();
+	decryption.set_decrypt(password, input_file);
+	long long raw_size_check = 0;
+	for (int i = 0; i < 8; i++)
+		raw_size_check = raw_size_check * 256 + read();
+	if (raw_size != raw_size_check) {
+		printf("Error 01\n");
+		printf("The file maybe corrupted or the password is wrong.");
+		exit(1);
+	}
 }
 
 #endif

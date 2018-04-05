@@ -1,5 +1,5 @@
-byte:	bitset<8>;
-bit:	bitset<1>;
+byte:	unsigned char;
+bit:	bool;
 
 bytes: vector<byte>;
 bits: vector<bit>;
@@ -9,6 +9,9 @@ code: same as (int) but require explicit type case
 node:
 	code val;
 	map<byte, node*> child;
+	node();
+	node(code set_val);
+	~node();
 	
 trie:
 	private:
@@ -46,31 +49,71 @@ dictionary:
 
 encode:
 	private:
+		encrypt encryption;				// encryption
 		ifstream input;					// input file stream
-		ofstream output;				// output file stream
 		std::streampos begin, end;			// begin and end position of the input file
 		long long input_size, output_size;		// size of input and output file
+		long long raw_size;				// size of raw file
 		bits buffer					// store the bits that have not been output
 		dictionary dict;				// the dictionary
-		void write(bytes output_bytes);			// write a specific byte
+		void write(bytes output_bytes);			// add a specific byte to be encrypted
 		void write(bits output_bits);			// write to output file
 		byte read();					// read from input file
 	public:
-		void start_encode();				// start decode
-		encode(const char*, const char*);		// constructor
+		void start_encode();								// start decode
+		encode(const char* input_file, const char* output_file, const char* password);	// constructor
 
 decode:
 	private:
-		ifstream input;					// input file stream
+		decrypt decryption;				// decryption
 		ofstream output;				// output file stream
 		std::streampos begin, end;			// begin and end position of the input file
 		long long input_size, output_size;		// size of input and output file
+		long long raw_size;				// size of raw file
 		bits buffer;					// store the bits that have not been input
 		dictionary dict;				// the dictionary
 		void write(byte output_byte);			// write to output file
 		void write(bytes output_bytes);			// write to output file
-		byte read();					// read a byte
+		byte read();					// read a decrypted byte
 		bits read(int no_of_bits);			// read from input file
 	public:
-		void start_decode()				// start decode
-		decode(const char*, const char*);		// constructor
+		void start_decode()								// start decode
+		decode(const char* input_file, const char* output_file, const char* password);	// constructor
+
+AES:
+	protected:
+		bytes cipher_key, round_keys[15];			// the cipher key and 15 round keys
+		bytes block;						// the block being processed
+		static const bytes rcon;				// the rcon values
+		static const bytes m01, m02, m03, m09, m11, m13, m14;	// the multiplication tables
+		static const bytes forward_S, inverse_S;		// the S tables
+		static unsigned int rightrotate(unsigned int, int);	// right rotate
+		static bytes SHA256(const char*);			// hashing password into 256 bit
+		void key_schedule();					// the key schedule
+		void sub_bytes();					// the sub bytes step
+		void shift_rows();					// the shift rows step
+		void mix_columns();					// the mix columns step
+		void add_round_key(int turn);				// the add round key step
+		void r_sub_bytes();					// the reverse sub bytes step
+		void r_shift_rows();					// the reverse shift rows step
+		void r_mix_columns();					// the reverse mix columns step
+		void r_add_round_key(int turn);				// the reverse add round key step
+
+encrypt: public AES
+	private:
+		ofstream output;						// output file stream
+		void encrypt_n_write();						// encrypt the block and write to file
+	public:
+		void add_to_encrypt(byte byte_to_encrypt);			// add the next byte to encrypt
+		bool finished();						// return true if block is empty and reached eof
+		void set_encrypt(const char* password, const char* output_file);// set up the variables
+		encrypt() {}							// constructor
+		
+decrypt: public AES
+	private:
+		ifstream input;							// input file stream
+		void read_n_decrypt();						// read a block from file and decrypt
+	public:
+		bytes get_next_decrypted();					// get the next decrypted byte
+		void set_decrypt(const char* password, const char* input_file);	// set up the variables
+		decrypt() {}							// constructor

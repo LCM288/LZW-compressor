@@ -1,0 +1,2 @@
+ERROR 01: raw_size is different from raw_size_check
+Probably caused by: The file maybe corrupted or the password is wrong.
