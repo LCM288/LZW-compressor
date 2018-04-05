@@ -7,7 +7,8 @@
 class encrypt: public AES {
 	private:
 		std::ofstream output;						// output file stream
-		void encrypt_n_write();						// encrypt the block and write to file
+		void do_encrypt();							// do the encryption
+		void write();								// write to file
 	public:
 		void add_to_encrypt(byte);					// add the next byte to encrypt
 		bool finished();							// return true if block is empty
@@ -15,8 +16,7 @@ class encrypt: public AES {
 		encrypt() {}								// constructor
 };
 
-void encrypt::encrypt_n_write() {
-	// do the encryption here
+void encrypt::do_encrypt() {
 	add_round_key(0);
 	for (int i = 1; i < 15; i++){
 		sub_bytes(); 
@@ -25,7 +25,9 @@ void encrypt::encrypt_n_write() {
 			mix_columns();
 		add_round_key(i);
 	}
-	// finish encryption
+}
+
+void encrypt::write() {
 	for (auto next_byte: block) {
 		char tmp = char(next_byte);
 		output.write(&tmp, 1);
@@ -35,8 +37,10 @@ void encrypt::encrypt_n_write() {
 
 void encrypt::add_to_encrypt(byte byte_to_encrypt) {
 	block.push_back(byte_to_encrypt);
-	if (block.size() == 16)
-		encrypt_n_write();
+	if (block.size() == 16) {
+		do_encrypt();
+		write();
+	}
 }
 
 bool encrypt::finished() {
