@@ -48,7 +48,7 @@ bool encrypt::finished() {
 }
 
 void encrypt::set_encrypt(const char* password, const char* output_file) {
-	output.open(output_file, std::ios::out | std::ios::binary);
+	output.open(output_file, std::ios::out | std::ios::app | std::ios::binary);
 	cipher_key = SHA256(password);
 	key_schedule();
 }
