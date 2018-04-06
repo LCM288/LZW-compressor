@@ -59,10 +59,20 @@ node::~node(){
 }
 
 code trie::get_val() const{
+	if (cur == NULL) {
+		printf("Error 10\n");
+		printf("The file maybe corrupted or the password is wrong.");
+		exit(10);
+	}
 	return cur -> val;
 }
 
 bool trie::exist_child(byte character) const{
+	if (cur == NULL) {
+		printf("Error 11\n");
+		printf("The file maybe corrupted or the password is wrong.");
+		exit(11);
+	}
 	#ifdef USE_MAP
 	if (cur -> child.find(character) != cur -> child.end())
 	#else
@@ -74,6 +84,11 @@ bool trie::exist_child(byte character) const{
 }
 
 void trie::add_new_node(byte character, code val){
+	if (cur == NULL) {
+		printf("Error 12\n");
+		printf("The file maybe corrupted or the password is wrong.");
+		exit(12);
+	}
 	#ifdef USE_MAP
 	cur -> child[character] = new node(val);
 	#else
@@ -82,6 +97,11 @@ void trie::add_new_node(byte character, code val){
 }
 
 void trie::go_to_child(byte character){
+	if (cur == NULL) {
+		printf("Error 13\n");
+		printf("The file maybe corrupted or the password is wrong.");
+		exit(13);
+	}
 	#ifdef USE_MAP
 	cur = cur -> child[character];
 	#else
