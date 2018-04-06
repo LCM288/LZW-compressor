@@ -1,5 +1,6 @@
 #include"dictionary.h"
 #include"decrypt.h"
+#include"timer.h"
 #include<fstream>
 
 #ifndef DECODE_H
@@ -7,9 +8,9 @@
 
 class decode {
 	private:
+		timer decode_timer;					// decode timer
 		decrypt decryption;					// decryption
 		std::ofstream output;				// output file stream
-		std::streampos begin, end;			// begin and end position of the input file
 		long long input_size, output_size;	// size of input and output file
 		long long raw_size;					// size of raw file
 		bits buffer;						// store the bits that have not been input
@@ -76,12 +77,19 @@ bits decode::read(int no_of_bits) {
 void decode::start_decode() {
 	while(output_size < raw_size) {
 		bits tmp = read(dict.next_length());
-		if (!rand())
-			printf("Deompressed %.2lf%% (%lld / %lld)\n", 100. * input_size / ((long long) (end - begin)), 
-														  input_size, (long long) (end - begin));
+		if (!rand()) {
+			printf("Deompressed %.2lf%% (%lld / %lld)\n", 100. * output_size / raw_size, output_size, raw_size);
+			long long time_passed = decode_timer.time_passed();
+			long long expected_remaining_time = 1. * time_passed * (raw_size - output_size) / output_size;
+			printf("Time used: %02lld:%02lld:%02lld Expected remaining time: %02lld:%02lld:%02lld\n",
+					time_passed / 3600000, time_passed % 3600000 / 60000, time_passed % 60000 / 1000, 
+					expected_remaining_time / 3600000, expected_remaining_time % 3600000 / 60000, expected_remaining_time % 60000 / 1000);
+		}
 		write(dict.decode(tmp));
 	}
-	printf("Deompressed 100.00%% (%lld / %lld)\n", (long long) (end - begin), (long long) (end - begin));
+	printf("Deompressed 100.00%% (%lld / %lld)\n", raw_size, raw_size);
+	long long time_passed = decode_timer.time_passed();
+	printf("Time used: %02lld:%02lld:%02lld\n", time_passed / 3600000, time_passed % 3600000 / 60000, time_passed % 60000 / 1000);
 }
 
 decode::decode (const char *input_file, const char *output_file, const char *password) {
@@ -93,12 +101,10 @@ decode::decode (const char *input_file, const char *output_file, const char *pas
 		input.read(&tmp, 1);
 		raw_size = raw_size * 256 + byte(tmp);
 	}
-	begin = input.tellg();
-	input.seekg (0, std::ios::end);
-	end = input.tellg();
 	input.close();
 	decryption.set_decrypt(password, input_file);
 	long long raw_size_check = 0;
+	decode_timer.start();
 	for (int i = 0; i < 8; i++)
 		raw_size_check = raw_size_check * 256 + read();
 	if (raw_size != raw_size_check) {
