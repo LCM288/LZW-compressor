@@ -1,2 +1,14 @@
 ERROR 01: raw_size is different from raw_size_check
 Probably caused by: The file maybe corrupted or the password is wrong.
+
+ERROR 10: trying to get value from a null node
+Probably caused by: The file maybe corrupted or the password is wrong.
+
+ERROR 11: trying to check exist child of a null node
+Probably caused by: The file maybe corrupted or the password is wrong.
+
+ERROR 12: trying to add new node for a null node
+Probably caused by: The file maybe corrupted or the password is wrong.
+
+ERROR 13: trying to go to child of a null node
+Probably caused by: The file maybe corrupted or the password is wrong.
