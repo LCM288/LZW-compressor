@@ -1,5 +1,6 @@
 #include"dictionary.h"
 #include"encrypt.h"
+#include"timer.h"
 #include<fstream>
 
 #ifndef ENCODE_H
@@ -7,9 +8,9 @@
 
 class encode {
 	private:
+		timer encode_timer;					// encode timer
 		encrypt encryption;					// encryption
 		std::ifstream input;				// input file stream
-		std::streampos begin, end;			// begin and end position of the input file
 		long long input_size, output_size;	// size of input and output file
 		long long raw_size;					// size of raw file
 		bits buffer;						// store the bits that have not been output
@@ -63,11 +64,15 @@ byte encode::read() {
 void encode::start_encode() {
 	while (!input.eof()) {
 		write(dict.encode(read()));
-		if (!rand())
-			printf("Compressed %.2lf%% (%lld / %lld) Compression rate %.2lf%%\n", 
-																				100. * input_size / ((long long) (end - begin)),
-																				input_size, (long long) (end - begin), 
-																				100. * output_size / input_size);
+		if (!rand()) {
+			printf("Compressed %.2lf%% (%lld / %lld) Compression rate %.2lf%%\n", 100. * input_size / raw_size, input_size, raw_size, 
+																				  100. * output_size / input_size);
+			long long time_passed = encode_timer.time_passed();
+			long long expected_remaining_time = 1. * time_passed * (raw_size - input_size) / input_size;
+			printf("Time used: %02lld:%02lld:%02lld Expected remaining time: %02lld:%02lld:%02lld\n",
+					time_passed / 3600000, time_passed % 3600000 / 60000, time_passed % 60000 / 1000,  
+					expected_remaining_time / 3600000, expected_remaining_time % 3600000 / 60000, expected_remaining_time % 60000 / 1000);
+		}
 	}
 	if (buffer.size()) {
 		while (buffer.size() < 8) buffer.push_back(0);
@@ -80,14 +85,15 @@ void encode::start_encode() {
 	while (!encryption.finished()) {
 		write(byte(0));
 	}
-	printf("Compressed 100.00%% (%lld / %lld) Compression rate %.2lf%%\n",
-																			(long long) (end - begin), (long long) (end - begin), 
-																			100. * output_size / (end - begin));
+	printf("Compressed 100.00%% (%lld / %lld) Compression rate %.2lf%%\n", raw_size, raw_size, 100. * output_size / raw_size);
+	long long time_passed = encode_timer.time_passed();
+	printf("Time used: %02lld:%02lld:%02lld\n", time_passed / 3600000, time_passed % 3600000 / 60000, time_passed % 60000 / 1000);
 }
 
 encode::encode (const char *input_file, const char *output_file, const char *password) {
 	input.open(input_file, std::ios::in | std::ios::binary);
 	input_size = output_size = 0;
+	std::streampos begin, end;
 	begin = input.tellg();
 	input.seekg(0, std::ios::end);
 	end = input.tellg();
@@ -106,6 +112,7 @@ encode::encode (const char *input_file, const char *output_file, const char *pas
 	}
 	output.close();
 	encryption.set_encrypt(password, output_file);
+	encode_timer.start();
 	for (int i = 0; i < 8; i++)
 		write(next_byte[i]);
 }
